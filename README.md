@@ -1,27 +1,16 @@
 ## Learning Auxiliary Monocular Contexts Helps Monocular 3D Object Detection
 
-By Xianpeng Liu, [Nan Xue](https://xuenan.net/) and [Tianfu Wu](https://tfwu.github.io/)
 
 ## Introduction
 
-This repository includes an official implementation of the paper ['Learning Auxiliary Monocular Contexts Helps Monocular 3D Object Detection'](https://arxiv.org/abs/2112.04628), 
-and an unofficial implementation of the excellent work [MonoDLE](https://github.com/xinzhuma/monodle).
-Motivated by the Cramer-Wold theorem in measure theory, MonoCon proposes a simple yet effective formulation for monocular 3D object detection without exploiting any extra information (lidar, depth, CAD, sequential, etc.). 
-It proposes to learn Monocular Contexts, as auxiliary tasks in training, to help monocular 3D object detection. 
-The key idea is that with the annotated 3D bounding boxes of objects in an image, there is a rich set of well-posed projected 2D supervision signals available in training, such as the projected corner keypoints and their associated offset vectors with respect to the center of 2D bounding box, which should be exploited as auxiliary tasks in training. 
-It outperforms prior arts in terms of both accuracy and speed.
-
-<img src="monocon/example/image.png" alt="vis1" style="zoom:50%;" />
-
-<img src="monocon/example/lidar.png" alt="vis2" style="zoom:50%;" />
-
+本文的核心创新在于引入了一种基于辅助学习的单目上下文分支和注意力机制归一化方法。通过对比无注意力机制、Softmax注意力机制和Sigmoid注意力机制归一化的效果，验证了MultiHead+AMCs的优越性。
 
 
 ## Usage
 
 ### Installation
 
-This repo is tested on python=3.6, cuda=10.1, pytorch=1.5.1, [mmcv-full=1.3.1](https://github.com/open-mmlab/mmcv), 
+This repo is tested on python=3.7, cuda=10.1, pytorch=1.5.1, [mmcv-full=1.3.1](https://github.com/open-mmlab/mmcv), 
 [mmdetection=2.11.0](https://github.com/open-mmlab/mmdetection), [mmsegmentation=0.13.0](https://github.com/open-mmlab/mmsegmentation) and 
 [mmdetection3D=0.14.0](https://github.com/open-mmlab/mmdetection3d).
 
@@ -36,7 +25,7 @@ Follow instructions below to install:
 - Create a conda environment
 
 ```
-conda create -n monocon python=3.6
+conda create -n monocon python=3.7
 conda activate monocon
 git clone https://github.com/Xianpeng919/MonoCon
 cd MonoCon
@@ -74,6 +63,10 @@ pip install mmsegmentation==0.13.0
 
 ```
 cd ./mmdetection3d-0.14.0
+pip install future
+rm -rf ./build
+find . -name "*.so" | xargs rm
+export CUDA_HOME=/usr/local/cuda-10.1/
 pip install -v -e .
 cd ..
 ```
@@ -81,10 +74,12 @@ cd ..
 - Adjust installed libs
 
 ```
-pip install timm
+pip install timm==0.4.12
 pip uninstall pycocotools
+pip install pycocotools --no-binary pycocotools
 pip uninstall mmpycocotools
 pip install mmpycocotools
+pip install mmpycocotools --no-binary mmpycocotools
 ```
 
  
